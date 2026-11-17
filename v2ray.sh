@@ -45,7 +45,7 @@ apt-get update && apt-get install supervisor zip nginx curl wget uuid-runtime -y
 mkdir -p /root/.v2ray
 cd /root/.v2ray
 if [ ! -f "/root/.v2ray/v2ray" ]; then
-  wget https://github.com/v2fly/v2ray-core/releases/download/v5.41.0/v2ray-linux-64.zip && unzip v2ray-linux-64.zip
+  wget -q -O v2ray-linux-64.zip https://github.com/v2fly/v2ray-core/releases/download/v5.41.0/v2ray-linux-64.zip && unzip -oq v2ray-linux-64.zip
 fi
 param
 pw
