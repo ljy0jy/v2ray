@@ -49,13 +49,14 @@ if [ ! -f "/root/.v2ray/v2ray" ]; then
 fi
 param
 pw
-CERT0=`/root/.v2ray/v2ray tls cert`
-CERT1=`/root/.v2ray/v2ray tls cert`
+CERT0=$(/root/.v2ray/v2ray tls cert -json=true </dev/null)
+CERT1="$CERT0"
 echo -e '[program:ss]\ncommand=/root/.v2ray/v2ray run -config=/root/.v2ray/config.json\nautostart=true\nautorestart=true' > /etc/supervisor/conf.d/ss.conf
 TEXT='{"inbounds":[{"port":'${http_port}',"protocol":"http","settings":{"accounts":[{"user":"user","pass":"'${http_password}'"}]}},{"port":'${socks5_port}',"protocol":"socks","settings":{"auth":"password","accounts":[{"user":"user","pass":"'${socks5_password}'"}]}},{"port":'${trojan_port}',"protocol":"trojan","settings":{"clients":[{"password":"'${trojan_password}'"}],"fallbacks":[{"dest":80}]},"streamSettings":{"security":"tls","tlsSettings":{"alpn":["http/1.1"],"certificates":['${CERT0}'],"disableSystemRoot":true}}},{"port":'
 TEXT=${TEXT}${vless_port}',"protocol":"vless","settings":{"clients":[{"id":"'${vless_password}'"}],"fallbacks":[{"dest":80}],"decryption":"none"},"streamSettings":{"security":"tls","tlsSettings":{"alpn":["http/1.1"],"certificates":['${CERT1}'],"disableSystemRoot":true}}},'
 TEXT=${TEXT}'{"port":'${shadowsocks_port}',"protocol":"shadowsocks","settings":{"password":"'${shadowsocks_password}'","method":"chacha20-ietf-poly1305","network":"tcp,udp"}}],"outbounds":[{"protocol":"freedom"}]}'
-echo -e $TEXT > /root/.v2ray/config.json
+printf '%s\n' "$TEXT" > /root/.v2ray/config.json
+/root/.v2ray/v2ray test -c /root/.v2ray/config.json
 service supervisor stop && service supervisor start
 echo 'trojan_port='${trojan_port}
 echo 'trojan_password='${trojan_password}
